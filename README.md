@@ -1,70 +1,58 @@
-\# 🛒 Distributed E-Commerce Data Pipeline
-
-\### Hadoop · Apache Spark · Apache Hive · Python · SQL
+ 🛒 Distributed E-Commerce Data Pipeline
+Hadoop · Apache Spark · Apache Hive · Python · SQL
 
 
 
 A production-style \*\*end-to-end ETL pipeline\*\* built on the real-world \*\*Olist Brazilian E-Commerce dataset\*\* (Kaggle). Raw CSV data across 5 relational tables is ingested into HDFS, joined and transformed using Apache Spark (PySpark), stored in optimized Parquet format, and analysed using 8 business-intelligence queries in Apache Hive.
 
 
-
-\---
-
-
-
-\## 📐 Architecture
+📐 Architecture
 
 
 
 ```
 
 Olist Dataset (5 CSV files)
+      │
 
-&#x20;        │
+      ▼
+ HDFS — Raw Layer
 
-&#x20;        ▼
+hdfs://localhost:9000/ecommerce/raw/
 
-&#x20; HDFS — Raw Layer
+       │
 
-&#x20; hdfs://localhost:9000/ecommerce/raw/
+       ▼
 
-&#x20;        │
+Apache Spark (PySpark)
 
-&#x20;        ▼
+ ├── Load 5 CSVs
 
-&#x20; Apache Spark (PySpark)
+ ├── Clean timestamps
 
-&#x20; ├── Load 5 CSVs
+ ├── Join: orders ⟶ customers ⟶ payments ⟶ items ⟶ products
 
-&#x20; ├── Clean timestamps
+ └── Feature selection
+       │
 
-&#x20; ├── Join: orders ⟶ customers ⟶ payments ⟶ items ⟶ products
+       ▼
+ Parquet — Processed Layer
 
-&#x20; └── Feature selection
+ hdfs://localhost:9000/ecommerce/processed/sales
 
-&#x20;        │
+       │
 
-&#x20;        ▼
+       ▼
 
-&#x20; Parquet — Processed Layer
+ Apache Hive — Analytics Layer
 
-&#x20; hdfs://localhost:9000/ecommerce/processed/sales
+ └── 8 Business Intelligence Queries
 
-&#x20;        │
+       │
 
-&#x20;        ▼
+       ▼
 
-&#x20; Apache Hive — Analytics Layer
-
-&#x20; └── 8 Business Intelligence Queries
-
-&#x20;        │
-
-&#x20;        ▼
-
-&#x20; Output CSVs → /home/kaviya/hive\_outputs/
-
-```
+Output CSVs → /home/kaviya/hive\_outputs/
 
 
 
@@ -72,17 +60,17 @@ Olist Dataset (5 CSV files)
 
 
 
-\## 🗂️ Dataset
+🗂️ Dataset
 
 
 
-\*\*Source:\*\* \[Olist Brazilian E-Commerce Dataset — Kaggle](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
+Source: \[Olist Brazilian E-Commerce Dataset — Kaggle](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
 
 
 
 | File | Description |
 
-|---|---|
+
 
 | `olist\_customers\_dataset.csv` | Customer profiles and locations |
 
@@ -96,37 +84,35 @@ Olist Dataset (5 CSV files)
 
 
 
-\---
 
 
 
-\## ⚙️ Tech Stack
+
+⚙️ Tech Stack
 
 
 
 | Tool | Purpose |
 
-|---|---|
 
-| \*\*HDFS\*\* | Distributed storage — raw and processed data |
+| HDFS | Distributed storage — raw and processed data |
 
-| \*\*Apache Spark (PySpark)\*\* | Multi-table join, cleaning, transformation |
+| Apache Spark (PySpark) | Multi-table join, cleaning, transformation |
 
-| \*\*Apache Hive\*\* | SQL-based analytical queries |
+| Apache Hive | SQL-based analytical queries |
 
-| \*\*Parquet\*\* | Columnar storage for optimized querying |
+| Parquet | Columnar storage for optimized querying |
 
-| \*\*Python 3\*\* | Pipeline scripting |
+| Python 3 | Pipeline scripting |
 
-| \*\*SQL\*\* | 8 business intelligence queries |
-
-
-
-\---
+| SQL | 8 business intelligence queries |
 
 
 
-\### Hive Analytics (`hive\_queries.sql`)
+
+
+
+Hive Analytics (`hive\_queries.sql`)
 
 
 
@@ -134,9 +120,9 @@ Olist Dataset (5 CSV files)
 
 
 
-| # | Query | Output Folder |
+| Query | Output Folder |
 
-|---|---|---|
+
 
 | 1 | Total Revenue Generated | `hive\_outputs/total\_revenue` |
 
@@ -156,19 +142,12 @@ Olist Dataset (5 CSV files)
 
 
 
-\---
-
-
-
-\## ✅ Verified Output
+✅ Verified Output
 
 
 
 All 8 query outputs successfully generated and saved to local directories .
 
-
-
-```
 
 output/
 
@@ -190,71 +169,50 @@ output/
 
 └── total\_revenue/
 
-```
 
-
-
-\---
-
-
-
-\## 🛠️ How to Run
-
-
+🛠️ How to Run
 
 ```bash
 
-\# 1. Clone the repo
+ 1. Clone the repo
 
 git clone https://github.com/KaviyaSri310/hadoop-spark-ecommerce-pipeline
 
 cd hadoop-spark-ecommerce-pipeline
 
 
-
-\# 2. Start Hadoop \& Hive services
+ 2. Start Hadoop \& Hive services
 
 start-dfs.sh
 
 start-yarn.sh
 
 
-
-\# 3. Upload raw data to HDFS
+ 3. Upload raw data to HDFS
 
 hdfs dfs -mkdir -p /ecommerce/raw
 
 hdfs dfs -put data/\*.csv /ecommerce/raw/
 
 
-
-\# 4. Run the Spark ETL job
+ 4. Run the Spark ETL job
 
 spark-submit etl\_pipeline.py
 
 
-
-\# 5. Run Hive analytics
+ 5. Run Hive analytics
 
 hive -f hive\_queries.sql
 
-```
 
 
+👩‍💻 Author
 
-\---
+Kaviya Sri G
 
-
-
-\## 👩‍💻 Author
-
-
-
-\*\*Kaviya Sri G\*\*
-
-B.Tech AI \& Data Science | Kangeyam Institute of Technology
+B.Tech AI & Data Science | Kangeyam Institute of Technology
 
 📧 kaviyaganesh310@gmail.com
 
-🔗 \[LinkedIn](https://linkedin.com/in/kaviya-sri-g-309a4a344) · \[GitHub](https://github.com/KaviyaSri310)
+🔗 LinkedIn : (https://linkedin.com/in/kaviya-sri-g-309a4a344) 
 
